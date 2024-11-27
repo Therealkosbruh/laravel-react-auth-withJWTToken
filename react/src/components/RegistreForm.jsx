@@ -2,11 +2,34 @@ import React from 'react';
 import { AuthInput } from './input';
 import { AuthButton } from './button';
 import styles from '../css/AuthForm.module.css';
+import { useState } from 'react';
+import axiosClient from '../axios-client';
+
 
 export const RegisterForm = () => {
-    const handleSubmit = (e) => {
-      e.preventDefault();
-    };
+  const [form, setForm] = useState({
+    lastName: '',
+    firstName: '',
+    patronymic: '',
+    login: '',
+    email: '',
+    password: '',
+  });
+  const [error, setError] = useState(null);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axiosClient.post('/register', form);
+      alert('Registration successful!');
+    } catch (error) {
+      setError(error.response.data.message || 'Something went wrong');
+    }
+  };
   
     return (
       <form 
