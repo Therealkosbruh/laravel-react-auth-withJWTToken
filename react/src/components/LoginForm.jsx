@@ -3,6 +3,7 @@ import { AuthInput } from './input';
 import { AuthButton } from './button';
 import styles from '../css/AuthForm.module.css';
 import axiosClient from '../axios-client';
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ export const LoginForm = () => {
     password: '',
   });
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,7 +19,6 @@ export const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submitting form:', form); 
     if (!form.login || !form.password) {
       setError('All fields are required!');
       return;
@@ -26,11 +27,11 @@ export const LoginForm = () => {
       const response = await axiosClient.post('/login', form);
       localStorage.setItem('token', response.data.token);
       alert('Login successful!');
+      navigate("/main"); // Redirect to Main
     } catch (error) {
       setError(error.response?.data?.message || 'Something went wrong');
     }
   };
-  
 
   return (
     <form 

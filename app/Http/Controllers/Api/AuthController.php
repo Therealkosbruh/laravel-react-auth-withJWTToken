@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -15,6 +14,8 @@ class AuthController extends Controller
     public function sign_up(SignupRequest $request)
     {
         $data = $request->validated();
+        
+        // Создание пользователя
         /** @var User $user */
         $user = User::create([
             'last_name' => $data['last_name'],
@@ -26,35 +27,34 @@ class AuthController extends Controller
         ]);
 
         $token = JWTAuth::fromUser($user);
+        $token = JWTAuth::customClaims(['login' => $user->login])->fromUser($user);  
 
         return response()->json([
             'user' => $user,
             'token' => $token,
         ]);
     }
+
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-    
-        // Проверка учетных данных и получение токена
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['message' => 'Invalid login or password'], 401);
         }
-    
-        // Получение текущего пользователя
+
         $user = JWTAuth::user();
-    
+
+        $token = JWTAuth::customClaims(['login' => $user->login])->fromUser($user);
+
         return response()->json([
             'user' => $user,
             'token' => $token,
         ]);
     }
-    
+
     public function logout()
     {
-        // Удаление токена
         JWTAuth::invalidate(JWTAuth::getToken());
-
         return response()->json(['message' => 'Logged out successfully']);
     }
 }
