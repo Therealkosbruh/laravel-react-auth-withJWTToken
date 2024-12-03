@@ -32,18 +32,6 @@ class AuthController extends Controller
             'token' => $token,
         ]);
     }
-
-    // public function login(LoginRequest $request)
-    // {
-    //     $credentials = $request->validated();
-    //     if(!Auth::attempt($credentials)){
-    //         return response([
-    //             'message' => 'Login or password are incorrect, try again'
-    //         ]);
-    //     }
-
-    //     $user = Auth::user();
-    // }
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
